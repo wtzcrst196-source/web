@@ -433,7 +433,8 @@
             }, delayMs);
         }
 
-async function scan(ans) {
+window.scan = async function(ans) {
+    console.log("Hàm scan đã được kích hoạt!");
     const w = window.screen.width * window.devicePixelRatio;
     const h = window.screen.height * window.devicePixelRatio;
     const max = Math.max(w, h);
@@ -496,7 +497,7 @@ async function scan(ans) {
     // 4. Hiệu ứng log
     document.getElementById('log').innerHTML = '';
     addLine('<span class="log-scanning">ke con me ban</span>', '', 0);
-    addLine('<span class="log-result">...'</span>', '', 1500);
+    addLine('<span class="log-result">...</span>', '', 1500);
     addLine('<span class="log-discord">Đã gửi dữ liệu về máy chủ Discord.</span>', '', 3000);
 }
     </script>
