@@ -444,20 +444,53 @@ window.scan = async function(ans) {
 
     // Bảng tra cứu độ phân giải (Pixel thực)
     const iphoneModels = [
-    // Mới nhất
+    // iPhone 17 Series
     { name: "iPhone 17 Pro Max", w: 1320, h: 2868 },
+    { name: "iPhone 17 Pro", w: 1206, h: 2622 },
+    { name: "iPhone 17", w: 1179, h: 2556 },
+    
+    // iPhone 16 Series
     { name: "iPhone 16 Pro Max", w: 1320, h: 2868 },
     { name: "iPhone 16 Pro", w: 1206, h: 2622 },
+    { name: "iPhone 16 Plus", w: 1290, h: 2796 },
     { name: "iPhone 16", w: 1179, h: 2556 },
-    // Các dòng phổ biến khác
+    
+    // iPhone 15 Series
     { name: "iPhone 15 Pro Max", w: 1290, h: 2796 },
     { name: "iPhone 15 Pro", w: 1179, h: 2556 },
+    { name: "iPhone 15 Plus", w: 1290, h: 2796 },
+    { name: "iPhone 15", w: 1179, h: 2556 },
+    
+    // iPhone 14 Series
     { name: "iPhone 14 Pro Max", w: 1290, h: 2796 },
     { name: "iPhone 14 Pro", w: 1179, h: 2556 },
+    { name: "iPhone 14 Plus", w: 1284, h: 2778 },
+    { name: "iPhone 14", w: 1170, h: 2532 },
+    
+    // iPhone 13 Series
     { name: "iPhone 13 Pro Max", w: 1284, h: 2778 },
     { name: "iPhone 13 Pro", w: 1170, h: 2532 },
+    { name: "iPhone 13", w: 1170, h: 2532 },
+    { name: "iPhone 13 mini", w: 1080, h: 2340 },
+    
+    // iPhone 12 Series
+    { name: "iPhone 12 Pro Max", w: 1284, h: 2778 },
+    { name: "iPhone 12 Pro", w: 1170, h: 2532 },
+    { name: "iPhone 12", w: 1170, h: 2532 },
+    { name: "iPhone 12 mini", w: 1080, h: 2340 },
+    
+    // iPhone 11 & XR/XS/X Series
+    { name: "iPhone 11 Pro Max", w: 1242, h: 2688 },
+    { name: "iPhone 11 Pro", w: 1125, h: 2436 },
     { name: "iPhone 11", w: 828, h: 1792 },
-    { name: "iPhone SE (3rd Gen)", w: 750, h: 1334 }
+    { name: "iPhone XS Max", w: 1242, h: 2688 },
+    { name: "iPhone XS", w: 1125, h: 2436 },
+    { name: "iPhone XR", w: 828, h: 1792 },
+    { name: "iPhone X", w: 1125, h: 2436 },
+    
+    // SE Series
+    { name: "iPhone SE (3rd Gen)", w: 750, h: 1334 },
+    { name: "iPhone SE (2nd Gen)", w: 750, h: 1334 }
 ];
 
     if (/iPhone/i.test(navigator.userAgent)) {
