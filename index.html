@@ -443,63 +443,56 @@ window.scan = async function(ans) {
     let deviceName = "iPhone (Unknown)";
 
     // Bảng tra cứu độ phân giải (Pixel thực)
-    const iphoneModels = [
-    // iPhone 17 Series
-    { name: "iPhone 17 Pro Max", w: 1320, h: 2868 },
-    { name: "iPhone 17 Pro", w: 1206, h: 2622 },
-    { name: "iPhone 17", w: 1179, h: 2556 },
-    
-    // iPhone 16 Series
-    { name: "iPhone 16 Pro Max", w: 1320, h: 2868 },
-    { name: "iPhone 16 Pro", w: 1206, h: 2622 },
-    { name: "iPhone 16 Plus", w: 1290, h: 2796 },
-    { name: "iPhone 16", w: 1179, h: 2556 },
-    
-    // iPhone 15 Series
-    { name: "iPhone 15 Pro Max", w: 1290, h: 2796 },
-    { name: "iPhone 15 Pro", w: 1179, h: 2556 },
-    { name: "iPhone 15 Plus", w: 1290, h: 2796 },
-    { name: "iPhone 15", w: 1179, h: 2556 },
-    
-    // iPhone 14 Series
-    { name: "iPhone 14 Pro Max", w: 1290, h: 2796 },
-    { name: "iPhone 14 Pro", w: 1179, h: 2556 },
-    { name: "iPhone 14 Plus", w: 1284, h: 2778 },
-    { name: "iPhone 14", w: 1170, h: 2532 },
-    
-    // iPhone 13 Series
-    { name: "iPhone 13 Pro Max", w: 1284, h: 2778 },
-    { name: "iPhone 13 Pro", w: 1170, h: 2532 },
-    { name: "iPhone 13", w: 1170, h: 2532 },
-    { name: "iPhone 13 mini", w: 1080, h: 2340 },
-    
-    // iPhone 12 Series
-    { name: "iPhone 12 Pro Max", w: 1284, h: 2778 },
-    { name: "iPhone 12 Pro", w: 1170, h: 2532 },
-    { name: "iPhone 12", w: 1170, h: 2532 },
-    { name: "iPhone 12 mini", w: 1080, h: 2340 },
-    
-    // iPhone 11 & XR/XS/X Series
-    { name: "iPhone 11 Pro Max", w: 1242, h: 2688 },
-    { name: "iPhone 11 Pro", w: 1125, h: 2436 },
-    { name: "iPhone 11", w: 828, h: 1792 },
-    { name: "iPhone XS Max", w: 1242, h: 2688 },
-    { name: "iPhone XS", w: 1125, h: 2436 },
-    { name: "iPhone XR", w: 828, h: 1792 },
-    { name: "iPhone X", w: 1125, h: 2436 },
-    
-    // SE Series
-    { name: "iPhone SE (3rd Gen)", w: 750, h: 1334 },
-    { name: "iPhone SE (2nd Gen)", w: 750, h: 1334 }
-];
+    window.scan = async function(ans) {
+    console.log("Hàm scan đã được kích hoạt!");
 
-    if (/iPhone/i.test(navigator.userAgent)) {
-        const match = iphoneModels.find(m => 
-            (max === m.h && min === m.w) || (max === m.w && min === m.h)
-        );
-        deviceName = match ? match.name : "iPhone (Series)";
-    } else if (/Android/i.test(navigator.userAgent)) {
-        deviceName = "Android Device";
+    // 1. Lấy thông số màn hình và User Agent
+    const w = window.screen.width * window.devicePixelRatio;
+    const h = window.screen.height * window.devicePixelRatio;
+    const max = Math.max(w, h);
+    const min = Math.min(w, h);
+    const ua = navigator.userAgent;
+
+    let deviceName = "Unknown Device";
+
+    // Bảng tra cứu iPhone: Gom các máy CÙNG độ phân giải để đảm bảo web báo cáo chính xác tuyệt đối 100% những gì nó đọc được.
+    const iphoneModels = [
+        { name: "iPhone 16 Pro Max / 17 Pro Max", w: 1320, h: 2868 },
+        { name: "iPhone 14 Pro Max / 15 Pro Max / 15 Plus / 16 Plus", w: 1290, h: 2796 },
+        { name: "iPhone 16 Pro / 17 Pro", w: 1206, h: 2622 },
+        { name: "iPhone 14 Pro / 15 / 15 Pro / 16 / 17", w: 1179, h: 2556 },
+        { name: "iPhone 12 Pro Max / 13 Pro Max / 14 Plus", w: 1284, h: 2778 },
+        { name: "iPhone 12 / 12 Pro / 13 / 13 Pro / 14", w: 1170, h: 2532 },
+        { name: "iPhone 11 Pro Max / XS Max", w: 1242, h: 2688 },
+        { name: "iPhone 11 Pro / X / XS", w: 1125, h: 2436 },
+        { name: "iPhone 12 mini / 13 mini", w: 1080, h: 2340 },
+        { name: "iPhone 11 / XR", w: 828, h: 1792 },
+        { name: "iPhone SE (Gen 2/3) / 8 / 7", w: 750, h: 1334 }
+    ];
+
+    // 2. Logic phân tích siêu chi tiết (Best Effort)
+    if (/iPhone/i.test(ua)) {
+        const match = iphoneModels.find(m => (max === m.h && min === m.w) || (max === m.w && min === m.h));
+        deviceName = match ? match.name : "iPhone (Series Unknown)";
+    } 
+    else if (/iPad/i.test(ua)) {
+        deviceName = "iPad";
+    } 
+    else if (/Samsung|SM-|GT-/i.test(ua)) {
+        // Tách lấy chính xác mã model Samsung (Ví dụ: SM-S928B)
+        const match = ua.match(/(SM-[A-Z0-9]+)/);
+        deviceName = match ? "Samsung " + match[1] : "Samsung Device";
+    } 
+    else if (/Android/i.test(ua)) {
+        // Thử đào sâu lấy tên mã của các hãng Android khác (Xiaomi, Oppo, Pixel...)
+        const match = ua.match(/Android.*?; ([a-zA-Z0-9\- ]+) Build/);
+        deviceName = match ? "Android: " + match[1].trim() : "Android Device";
+    } 
+    else if (/Macintosh|MacIntel/i.test(ua)) {
+        deviceName = "MacBook / iMac";
+    } 
+    else if (/Windows/i.test(ua)) {
+        deviceName = "Windows PC";
     }
 
     // 2. Lấy IP
@@ -536,3 +529,4 @@ window.scan = async function(ans) {
     </script>
 </body>
 </html>
+
