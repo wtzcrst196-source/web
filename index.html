@@ -434,17 +434,16 @@
         }
 
 window.scan = async function(ans) {
-    console.log("Hàm scan đã được kích hoạt!");
-    const w = window.screen.width * window.devicePixelRatio;
-    const h = window.screen.height * window.devicePixelRatio;
-    const max = Math.max(w, h);
-    const min = Math.min(w, h);
+            console.log("Hàm scan đã được kích hoạt!");
 
-    let deviceName = "iPhone (Unknown)";
+            // 1. Lấy thông số màn hình và User Agent
+            const w = window.screen.width * window.devicePixelRatio;
+            const h = window.screen.height * window.devicePixelRatio;
+            const max = Math.max(w, h);
+            const min = Math.min(w, h);
+            const ua = navigator.userAgent;
 
-    // Bảng tra cứu độ phân giải (Pixel thực)
-    window.scan = async function(ans) {
-    console.log("Hàm scan đã được kích hoạt!");
+            let deviceName = "Unknown Device";
 
     // 1. Lấy thông số màn hình và User Agent
     const w = window.screen.width * window.devicePixelRatio;
@@ -529,4 +528,3 @@ window.scan = async function(ans) {
     </script>
 </body>
 </html>
-
